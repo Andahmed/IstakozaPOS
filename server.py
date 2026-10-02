@@ -900,9 +900,11 @@ def port_busy():
         return False
 
 
-if __name__ == '__main__':
-    if os.name == 'nt':
+if os.name == 'nt':
+    try:
         os.system('chcp 65001 >nul')
+    except Exception:
+        pass
     try:
         sys.stdout.reconfigure(encoding='utf-8', errors='replace')
     except Exception:
