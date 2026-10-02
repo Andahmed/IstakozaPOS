@@ -1,0 +1,49 @@
+name: Build IstakozaPOS for Windows
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyInstaller
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+
+      - name: Build IstakozaPOS.exe
+        run: |
+          pyinstaller --noconfirm --onefile --console --name IstakozaPOS --add-data "pos_istakoza.html;." server.py
+
+      - name: Copy exe to root
+        run: |
+          copy dist\IstakozaPOS.exe IstakozaPOS.exe
+
+      - name: Install NSIS
+        run: |
+          choco install nsis -y
+
+      - name: Build Installer
+        run: |
+          & "C:\Program Files (x86)\NSIS\makensis.exe" setup.nsi
+
+      - name: Upload Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: IstakozaPOS-Windows
+          path: |
+            IstakozaPOS.exe
+            IstakozaPOS_Setup.exe
+          retention-days: 30
