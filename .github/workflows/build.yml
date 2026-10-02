@@ -1,4 +1,4 @@
-name: Build IstakozaPOS for Windows
+name: Build IstakozaPOS for Windows 32-bit
 
 on:
   push:
@@ -13,19 +13,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
+      - name: Setup Python 3.8 32-bit
+        run: |
+          Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.8.10/python-3.8.10.exe" -OutFile "python-installer.exe"
+          Start-Process -FilePath "python-installer.exe" -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1 Include_test=0" -Wait
+          echo "C:\Program Files (x86)\Python38-32" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Verify Python
+        run: |
+          python --version
+          python -c "import struct; print(struct.calcsize('P') * 8)"
 
       - name: Install PyInstaller
         run: |
           python -m pip install --upgrade pip
-          pip install pyinstaller
+          python -m pip install pyinstaller==5.13.2
 
       - name: Build IstakozaPOS.exe
         run: |
-          pyinstaller --noconfirm --onefile --console --name IstakozaPOS --add-data "pos_istakoza.html;." server.py
+          python -m PyInstaller --noconfirm --onefile --console --name IstakozaPOS --add-data "pos_istakoza.html;." server.py
 
       - name: Copy exe to root
         run: |
@@ -42,7 +48,7 @@ jobs:
       - name: Upload Installer
         uses: actions/upload-artifact@v4
         with:
-          name: IstakozaPOS-Windows
+          name: IstakozaPOS-Windows-32bit
           path: |
             IstakozaPOS.exe
             IstakozaPOS_Setup.exe
