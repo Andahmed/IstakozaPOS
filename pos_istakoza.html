@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="pos-ui-version" content="4"><meta name="theme-color" content="#0f172a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="pos-ui-version" content="5"><meta name="theme-color" content="#0f172a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>نقطة البيع - إستاكوزا</title>
 <style>
 :root{--bg:#0f172a;--surface:#1e293b;--surface2:#273549;--accent:#3b82f6;--accent2:#06b6d4;--green:#10b981;--red:#ef4444;--orange:#f59e0b;--text:#f1f5f9;--text2:#94a3b8;--border:#334155;--radius:12px}
@@ -134,19 +134,24 @@ tr.isvoid td{opacity:.55;text-decoration:line-through}tr.isvoid td:last-child,tr
 .tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:8px}
 .tab{background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:8px 14px;border-radius:8px;cursor:pointer;font-family:Arial;font-size:13px;font-weight:bold}
 .tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.stabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:8px}
+.setsec{display:none}.setsec.show{display:block}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px}
+.card h4{color:var(--accent2);margin-bottom:8px;font-size:14px}
+.hint{font-size:12px;color:var(--text2);margin:6px 0}
+.card .cfg{margin-bottom:0}
 </style>
 </head>
 <body>
-<div id="login"><div class="box"><h2>🦞 إستاكوزا</h2><input id="lu" placeholder="اسم المستخدم" autocomplete="username"><input id="lp" type="password" placeholder="كلمة السر" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()"><button class="modal-btn save" style="width:100%;flex:none" onclick="login()">دخول</button><div id="lerr"></div></div></div>
+<div id="login"><div class="box"><h2>🦞 إستاكوزا</h2><div id="lbranch" style="text-align:center;color:var(--text2);font-size:13px;margin:-8px 0 10px"></div><input id="lu" placeholder="اسم المستخدم" autocomplete="username"><input id="lp" type="password" placeholder="كلمة السر" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()"><button class="modal-btn save" style="width:100%;flex:none" onclick="login()">دخول</button><div id="lerr"></div></div></div>
 <div id="toast"></div><div id="notes"></div><div id="kitchenContent" style="display:none"></div>
 <div class="header">
-  <h1>🦞 نقطة البيع - إستاكوزا</h1>
+  <h1 id="hdrTitle">🦞 نقطة البيع - إستاكوزا</h1>
   <div class="mode"><button class="hbtn mbtn active" id="mCash" onclick="setMode('cash')">🧾 كاشير</button><button class="hbtn mbtn dv" id="mDel" onclick="setMode('delivery')">🛵 دليفري</button></div>
   <div class="hbtns">
     <button class="hbtn" id="bOrd" style="background:var(--accent2);border-color:var(--accent2);color:#fff" onclick="openOrders()">📋 الأوردرات</button>
     <button class="hbtn" id="bStores" onclick="openStores()">📦 المخازن</button>
     <button class="hbtn" id="bSet" onclick="openSettings()">⚙️ الإعدادات</button>
-    <button class="hbtn" id="bPr" title="الطابعات" onclick="openPrinters()">🖨️</button>
     <span class="time" id="clock"></span><span class="time" id="who"></span><button class="hbtn" onclick="logout()">🚪 خروج</button>
   </div>
 </div>
@@ -294,11 +299,37 @@ tr.isvoid td{opacity:.55;text-decoration:line-through}tr.isvoid td:last-child,tr
 
 <!-- Settings -->
 <div class="modal-overlay" id="settingsModal"><div class="modal wide">
-  <h3>⚙️ الإعدادات</h3><div class="cfg" id="cfgBox"></div><h4 style="margin:6px 0">📡 إرسال الطلبيات (IP)</h4><div class="cfg" id="poCfgBox"></div><h4 style="margin:6px 0">👥 المستخدمين والصلاحيات</h4><div id="usersBox"></div><h4 style="margin:6px 0">🗂️ الجروبات والأصناف</h4>
-  <div class="filters"><input id="sFilter" placeholder="🔍 بحث باسم أو كود صنف" oninput="renderSettings()" style="width:220px!important"><input id="gNew" placeholder="اسم جروب جديد (مثلاً: عروض)" style="width:220px!important"><button class="modal-btn save" style="flex:none" onclick="addGroup()">➕ إضافة جروب</button></div>
-  <p style="font-size:12px;color:var(--text2);margin:6px 0">اضغط على اسم المطعم ثم على الجروب لفتح أصنافه. الأكواد تتولد تلقائياً (جروب 1001 وأصنافه 100101، 100102...). اضغط "💾 حفظ التغييرات" بعد التعديل.</p>
-  <div id="sBody"></div>
-  <div class="modal-btns"><button class="modal-btn save" onclick="saveSettings()">💾 حفظ التغييرات</button><button class="modal-btn" onclick="closeModal('settingsModal');openReport()">📑 تقارير متقدمة</button><button class="modal-btn" style="background:var(--accent2)" onclick="openPrinters()">🖨️ الطابعات</button><button class="modal-btn" style="background:var(--accent2)" onclick="openBackup()">📦 النسخ الاحتياطي</button><button class="modal-btn" onclick="backup()">⬇️ تصدير JSON</button><button class="modal-btn" onclick="$('bkFile').click()">⬆️ استيراد</button><input type="file" id="bkFile" accept=".json" style="display:none" onchange="restore(this)"><button class="modal-btn red" onclick="resetData()">تصفير المبيعات والمخزن</button><button class="modal-btn cancel" onclick="closeModal('settingsModal');renderAll()">إغلاق</button></div>
+  <h3>⚙️ الإعدادات</h3>
+  <div class="stabs" id="setTabs"></div>
+
+  <div class="setsec" id="sec-site">
+    <div class="card"><h4>🏢 بيانات الفرع (Site)</h4><div class="cfg" id="siteBox"></div>
+      <p class="hint">اسم وكود الفرع بيظهروا في أعلى الشاشة وعلى الرسيت، وكود الفرع بيتسجل مع كل فاتورة.</p></div>
+    <div class="card"><h4>🌐 الدخول من الأجهزة التانية</h4><div id="siteInfo"></div></div>
+  </div>
+
+  <div class="setsec" id="sec-gen"><div id="genBox"></div></div>
+
+  <div class="setsec" id="sec-print">
+    <div class="card"><h4>🖨️ الطباعة</h4>
+      <p class="hint">طابعة الويندوز (رسيت العميل والمطبخ) وطابعات الشبكة (IP) وتصميم شكل الرسيت.</p>
+      <div class="modal-btns"><button class="modal-btn" style="background:var(--accent2)" onclick="openPrinters()">🖨️ إعدادات الطابعات</button><button class="modal-btn" style="background:var(--orange)" onclick="openTpl()">🧾 تصميم الرسيت</button></div></div>
+  </div>
+
+  <div class="setsec" id="sec-users"><div class="card"><h4>👥 المستخدمين والصلاحيات</h4><div id="usersBox"></div></div></div>
+
+  <div class="setsec" id="sec-menu"><div class="card"><h4>🗂️ الجروبات والأصناف</h4>
+    <div class="filters"><input id="sFilter" placeholder="🔍 بحث باسم أو كود صنف" oninput="renderSettings()" style="width:220px!important"><input id="gNew" placeholder="اسم جروب جديد (مثلاً: عروض)" style="width:220px!important"><button class="modal-btn save" style="flex:none" onclick="addGroup()">➕ إضافة جروب</button></div>
+    <p class="hint">اضغط على اسم المطعم ثم على الجروب لفتح أصنافه. الأكواد تتولد تلقائياً (جروب 1001 وأصنافه 100101، 100102...).</p>
+    <div id="sBody"></div></div></div>
+
+  <div class="setsec" id="sec-sys">
+    <div id="sysInfo"></div>
+    <div class="card"><h4>💾 النسخ والبيانات</h4><div class="modal-btns"><button class="modal-btn" style="background:var(--accent2)" onclick="openBackup()">📦 النسخ الاحتياطي</button><button class="modal-btn" onclick="backup()">⬇️ تصدير JSON</button><button class="modal-btn" onclick="$('bkFile').click()">⬆️ استيراد</button><input type="file" id="bkFile" accept=".json" style="display:none" onchange="restore(this)"></div></div>
+    <div class="card" style="border-color:var(--red)"><h4 style="color:var(--red)">⚠️ منطقة الخطر</h4><div class="modal-btns"><button class="modal-btn red" onclick="resetData()">🗑️ تصفير المبيعات والمخزن</button></div></div>
+  </div>
+
+  <div class="modal-btns" style="border-top:1px solid var(--border);padding-top:10px"><button class="modal-btn save" onclick="saveSettings()">💾 حفظ التغييرات</button><button class="modal-btn cancel" onclick="closeModal('settingsModal');renderAll()">إغلاق</button></div>
 </div></div>
 
 <!-- Printers -->
@@ -420,7 +451,7 @@ function restoreCart(){try{const d=JSON.parse(localStorage.getItem('pos_cart'));
 function logout(){if(tok)fetch('/api/logout',{method:'POST',headers:{'X-Token':tok}});tok='';sessionStorage.removeItem('tok');location.reload()}
 function applyRole(){
   const a=me.role==='admin',p=cfg.perm||{};$('who').textContent='👤 '+(me.full||me.u);
-  [['bPr',a||p.printer],['bLast',a||p.reprint],['bSet',a],['bStores',a||p.stock||p.rep||p.po],['bClose',a||p.close],['bDisc',a||p.disc]].forEach(([i,v])=>$(i).style.display=v?'':'none');
+  [['bLast',a||p.reprint],['bSet',a||p.printer],['bStores',a||p.stock||p.rep||p.po],['bClose',a||p.close],['bDisc',a||p.disc]].forEach(([i,v])=>$(i).style.display=v?'':'none');
 }
 let cart=[],discount=0,activeCat='الكل',lid=0,wId=null,wLid=null,pend={};
 const find=id=>products.find(p=>p.id===id);
@@ -467,7 +498,7 @@ function renderInvoice(){
   const t=totals();
   $('subtotal').textContent=m2(t.sub)+' ج';$('discountShow').textContent=m2(t.d)+' ج';$('grandTotal').textContent=m2(t.grand)+' ج';$('taxRow').style.display=cfg.tax>0?'flex':'none';$('taxShow').textContent=m2(t.tax)+' ج';$('feeRow').style.display=mode==='delivery'?'flex':'none';$('noteBtn').textContent=cNote?'📝 ملاحظة ✓':'📝 ملاحظة';$('noteLine').textContent=cNote?'📝 '+cNote:'';$('noteLine').style.display=cNote?'block':'none';saveCart();
 }
-const renderAll=()=>{renderCategories();renderProducts();renderInvoice()};
+const renderAll=()=>{renderCategories();renderProducts();renderInvoice();applySite()};
 
 // ============ Cart ============
 function setCategory(c){activeCat=c;renderCategories();renderProducts()}
@@ -511,6 +542,7 @@ const LOGO='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALAAAACwAQAAAACHzNnzAA
 const cashName=s=>s.by===me.u?(me.full||me.u):(s.by||'');
 const TPL_C=`{{#hasLogo}}<div style="text-align:center;margin-bottom:2px"><img src="{{logo}}" style="width:22mm;height:22mm;image-rendering:pixelated"></div>{{/hasLogo}}{{^hasLogo}}<h2>🦞 {{name}}</h2>{{/hasLogo}}
 {{#phone}}<div class="r-center">📞 {{phone}}</div>{{/phone}}
+{{#branch}}<div class="r-center">{{branchLine}}</div>{{/branch}}
 <div class="r-center">{{type}} - فاتورة #{{no}}</div>
 <div class="r-center">{{date}} - {{time}}</div>
 {{#showCashier}}<div class="r-center">الكاشير: {{cashier}}</div>{{/showCashier}}
@@ -539,7 +571,7 @@ function rcptHtml(s,t){
   const dv=s.type==='delivery',c=s.cust||{},dp=s.sub>0?Math.round(s.disc/s.sub*1000)/10:0;
   const rows=s.items.map(l=>`<div class="r-row"><span>${esc(l.name)} ×${fmtQ(l.qty,l.unit)}</span><span>${m2(l.price*l.qty)}</span></div>`).join('');
   t=t||cfg.tplCustomer||TPL_C;
-  let h=tplRender(t,{logo:LOGO,name:esc(cfg.name),phone:esc(cfg.phone),no:String(s.no).padStart(4,'0'),type:dv?'🛵 دليفري':'كاشير',date:esc(s.day),time:esc(s.time),cashier:esc(cashName(s)),custName:esc(c.name||'-'),custPhone:esc(c.phone||''),custAddr:esc(c.addr||''),items:rows,subtotal:m2(s.sub),discount:m2(s.disc),discPct:dp,taxAmt:m2(s.tax||0),feeAmt:m2(s.fee||0),total:m2(s.total),footer:esc(cfg.foot),qr:qrImg(),comment:cmtHtml(s.comment)},{hasLogo:!!cfg.logoOn,phone:!!cfg.phone,showCashier:!!cfg.rcpCashier,delivery:dv,disc:s.disc>0,tax:s.tax>0,fee:dv,qr:!!cfg.qrUrl,comment:!!s.comment});
+  let h=tplRender(t,{logo:LOGO,name:esc(cfg.name),phone:esc(cfg.phone),no:String(s.no).padStart(4,'0'),type:dv?'🛵 دليفري':'كاشير',date:esc(s.day),time:esc(s.time),cashier:esc(cashName(s)),custName:esc(c.name||'-'),custPhone:esc(c.phone||''),custAddr:esc(c.addr||''),items:rows,subtotal:m2(s.sub),discount:m2(s.disc),discPct:dp,taxAmt:m2(s.tax||0),feeAmt:m2(s.fee||0),total:m2(s.total),footer:esc(cfg.foot),qr:qrImg(),comment:cmtHtml(s.comment),branchLine:esc(branchLine()),branchCode:esc(cfg.branchCode||'')},{hasLogo:!!cfg.logoOn,phone:!!cfg.phone,branch:!!branchLine(),showCashier:!!cfg.rcpCashier,delivery:dv,disc:s.disc>0,tax:s.tax>0,fee:dv,qr:!!cfg.qrUrl,comment:!!s.comment});
   if(s.comment&&!/\{\{[#^]?comment\}\}/.test(t))h+=`<div class="divider"></div><div>📝 ${cmtHtml(s.comment)}</div>`;
   return h;
 }
@@ -715,6 +747,7 @@ function ticketCustomer(s){
   const dv=s.type==='delivery',c=s.cust||{},L=[];
   if(cfg.logoOn)L.push({k:'g'});else L.push({k:'c',s:cfg.name,z:1.4});
   if(cfg.phone)L.push({k:'c',s:'تليفون: '+cfg.phone,z:.85});
+  if(branchLine())L.push({k:'c',s:branchLine(),z:.85});
   L.push({k:'c',s:(dv?'دليفري - ':'')+'فاتورة #'+pad4(s.no)},{k:'c',s:s.day+' - '+s.time,z:.85});
   if(cfg.rcpCashier)L.push({k:'c',s:'الكاشير: '+cashName(s),z:.85});
   L.push({k:'d'});
@@ -832,12 +865,11 @@ async function testPr(id){
 const PCF=[['auto','طباعة تلقائية بعد الدفع','sel',[[1,'نعم'],[0,'لا']]],['pw','عرض الورقة (مم)','number'],['pm','طريقة المقاس','sel',[['win','من إعدادات الويندوز'],['fixed','مقاس ثابت (عرض × طول)'],['auto','طول تلقائي حسب الفاتورة']]],['ph','طول الورقة (مم) للمقاس الثابت','number'],['fs','حجم الخط (px)','number'],['mg','هامش جانبي (مم)','number'],['feed','مسافة قبل القص (مم)','number'],['kWin','طباعة رسيت المطبخ على طابعة الويندوز مع رسيت العميل','sel',[[1,'نعم'],[0,'لا']]],['showRcp','عرض نافذة الرسيت بعد الدفع','sel',[[0,'لا (يطبع على طول)'],[1,'نعم']]],['logoOn','طباعة اللوجو على الرسيت','sel',[[1,'نعم'],[0,'لا']]],['kNote','طباعة ملاحظة الطلب على رسيت المطبخ','sel',[[0,'لا'],[1,'نعم']]]];
 const CF=[['name','اسم المطعم','text'],['phone','تليفون المطعم','text'],['foot','رسالة أسفل الفاتورة','text'],['fee','رسوم التوصيل الافتراضية (ج)','number'],['tax','ضريبة %','number'],['maxDisc','أقصى خصم للكاشير %','number'],['lowStock','تنبيه المخزن عند أقل من','number'],['round','تقريب الإجمالي','sel',[[0,'بدون'],[0.5,'لأقرب 0.5'],[1,'لأقرب جنيه'],[5,'لأقرب 5']]],['rcpCashier','اسم الكاشير على الفاتورة','sel',[[1,'نعم'],[0,'لا']]],['qrUrl','رابط الـ QR على الفاتورة (فاضي = بدون QR)','text'],['qrText','نص فوق الـ QR','text']];
 const cfgHtml=list=>list.map(([k,l,t,o])=>`<div><label>${l}</label>`+(t==='sel'?`<select onchange="cfgSet('${k}',this.value)">${o.map(x=>`<option value="${x[0]}" ${String(cfg[k])===String(x[0])?'selected':''}>${x[1]}</option>`).join('')}</select>`:`<input type="${t}" step="any" value="${esc(cfg[k])}" onchange="cfgSet('${k}',this.value)">`)+'</div>').join('');
-function renderCfg(){$('cfgBox').innerHTML=cfgHtml(CF);$('poCfgBox').innerHTML=cfgHtml(POCF)}
-function cfgSet(k,v){cfg[k]=['pw','ph','fs','mg','auto','feed','fee','tax','maxDisc','lowStock','round','rcpCashier','kWin','showRcp','logoOn','kNote','poPort'].includes(k)?(parseFloat(v)||0):v;save();renderInvoice()}
+function cfgSet(k,v){cfg[k]=['pw','ph','fs','mg','auto','feed','fee','tax','maxDisc','lowStock','round','rcpCashier','kWin','showRcp','logoOn','kNote','poPort'].includes(k)?(parseFloat(v)||0):v;save();renderInvoice();applySite();if(k==='serverIp')renderSite()}
 function backup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({products,sales,stock,cfg,archive})],{type:'application/json'}));a.download='نسخة_احتياطية_'+today()+'.json';a.click()}
 function restore(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.products)throw 0;products=d.products;sales=d.sales||[];archive=d.archive||[];stock=d.stock||{};cfg={...DEF,...d.cfg};api('/api/import',{products,sales,archive,stock,cfg}).then(()=>location.reload())}catch(e){alert('ملف غير صالح')}};r.readAsText(f)}
 function saveSettings(){if(document.activeElement)document.activeElement.blur();save();renderAll();closeModal('settingsModal');alert('تم حفظ التغييرات ✅')}
-function openSettings(){renderCfg();renderSettings();renderUsers();show('settingsModal')}
+function openSettings(){if(isAdm()){renderCfg();renderSettings();renderUsers()}setTabGo(isAdm()?(setTab||'site'):'print');show('settingsModal')}
 async function renderUsers(){
   users=await api('/api/users');const P=cfg.perm||{};
   $('usersBox').innerHTML=`<div style="margin-bottom:8px;font-size:13px">صلاحيات الكاشير: `+[['disc','الخصم'],['del','حذف أصناف من الفاتورة'],['stock','المخزن'],['rep','التقارير'],['close','قفل اليوم'],['printer','إعدادات الطابعة'],['reprint','إعادة طباعة آخر فاتورة'],['price','تعديل سعر اليوم للأسماك'],['void','إلغاء أوردر (Void)'],['edit','تعديل أوردر'],['return','مرتجع (بباسورد مدير)'],['po','الطلبيات']].map(([k,l])=>`<label style="display:inline-flex;gap:4px;margin-left:12px;align-items:center"><input type="checkbox" style="width:auto;margin:0" ${P[k]?'checked':''} onchange="cfg.perm={...cfg.perm,${k}:this.checked?1:0};save()">${l}</label>`).join('')+`</div>
@@ -1157,6 +1189,43 @@ async function siAdd(){const n=store.items.reduce((m,i)=>Math.max(m,parseInt(i.c
 async function siDel(code){if(!confirm('حذف الكود '+code+'؟'))return;try{await api('/api/store/item',{old_code:code,code,del:1});await stRe()}catch(e){alert(e.message)}}
 async function tplDelPo(id){if(!confirm('حذف القالب؟'))return;try{await api('/api/store/template',{id,del:1});await stRe()}catch(e){alert(e.message)}}
 
+// ============ تنسيق الإعدادات (تابات) + الفرع Site ============
+const SET_TABS=[['site','🏢 الفرع'],['gen','🧾 عام'],['print','🖨️ الطباعة'],['users','👥 المستخدمين'],['menu','🗂️ الأصناف'],['sys','🛠️ النظام']];
+let setTab='site';
+function setTabGo(k){
+  setTab=k;
+  $('setTabs').innerHTML=SET_TABS.filter(t=>isAdm()||t[0]==='print').map(t=>`<button class="tab ${t[0]===k?'active':''}" onclick="setTabGo('${t[0]}')">${t[1]}</button>`).join('');
+  document.querySelectorAll('.setsec').forEach(e=>e.classList.toggle('show',e.id==='sec-'+k));
+  if(k==='site')renderSite();if(k==='sys')renderSys();
+}
+const SITECF=[['branchName','اسم الفرع','text'],['branchCode','كود الفرع','text'],['serverIp','IP السيرفر','text']];
+const CFG_GROUPS=[['🏪 بيانات المطعم',['name','phone','foot']],['💰 الحسابات',['tax','fee','round','maxDisc']],['🧾 الرسيت',['rcpCashier','qrUrl','qrText']],['📦 المخزن والمرتجع',['lowStock','retReasons']]];
+function renderCfg(){
+  $('genBox').innerHTML=CFG_GROUPS.map(([t,ks])=>`<div class="card"><h4>${t}</h4><div class="cfg">${cfgHtml(ks.map(k=>CF.find(c=>c[0]===k)).filter(Boolean))}</div></div>`).join('');
+  $('siteBox').innerHTML=cfgHtml(SITECF);
+}
+const branchLine=()=>cfg.branchName?('فرع: '+cfg.branchName+(cfg.branchCode?' ('+cfg.branchCode+')':'')):(cfg.branchCode?'فرع '+cfg.branchCode:'');
+function applySite(){const b=cfg.branchName?' - '+cfg.branchName:'';$('hdrTitle').textContent='🦞 '+(cfg.name||'نقطة البيع')+b;document.title='نقطة البيع - '+(cfg.name||'')+b}
+async function renderSite(){
+  const port=location.port||'8080',ip=String(cfg.serverIp||'').trim(),url=ip?'http://'+ip+':'+port:'';
+  let info=null;try{info=await api('/api/netinfo')}catch(e){}
+  const ips=info?info.ips:[];
+  $('siteInfo').innerHTML=`<div class="filters"><button class="modal-btn" style="flex:none" onclick="siteDetect()">🔍 اكتشاف IP تلقائي</button><span style="font-size:12px;color:var(--text2)">${ips.length?'العناوين على الجهاز ده: '+ips.map(x=>`<a href="#" style="color:var(--accent2)" onclick="sitePick('${x}');return false">${x}</a>`).join(' | '):(srvVer<5?'السيرفر قديم - مفيش اكتشاف تلقائي':'')}</span></div>`
+   +(url?`<div style="margin-top:10px">🔗 افتح البرنامج من أي كمبيوتر أو فون على نفس الشبكة:<div style="font-size:20px;font-weight:bold;color:var(--accent2);direction:ltr;text-align:right;margin:6px 0">${esc(url)}</div><div id="siteQr"></div></div>`:'<p class="hint" style="margin-top:8px">اكتب IP السيرفر (أو دوس "اكتشاف") عشان يظهر رابط الدخول وكود QR للفون.</p>')
+   +`<div class="hint" style="margin-top:8px">البورت: ${esc(port)} - اسم الجهاز: ${esc(info?info.host:'-')}</div>`;
+  if(url){const q=qrMake(url);if(q&&$('siteQr'))$('siteQr').innerHTML=`<img src="${q.createDataURL(5,2)}" style="image-rendering:pixelated;background:#fff;border-radius:6px">`}
+}
+function sitePick(ip){cfg.serverIp=ip;save();renderCfg();renderSite()}
+async function siteDetect(){
+  if(srvVer<5)return alert(OLD);
+  try{const i=await api('/api/netinfo');if(!i.ips.length)return alert('مفيش IP على الشبكة - اتأكد إن الجهاز متوصل بالراوتر');sitePick(i.ips[0])}catch(e){alert(e.message)}
+}
+async function renderSys(){
+  let i=null;try{i=await api('/api/netinfo')}catch(e){}
+  $('sysInfo').innerHTML=`<div class="card"><h4>ℹ️ معلومات النظام</h4><table><tr><td>إصدار السيرفر</td><td>${srvVer}</td></tr><tr><td>الفرع</td><td>${esc(cfg.branchName||'-')} (${esc(cfg.branchCode||'-')})</td></tr><tr><td>قاعدة البيانات</td><td dir="ltr" style="text-align:left">${esc(i?i.db:'-')}</td></tr><tr><td>الصفحة المستخدمة</td><td dir="ltr" style="text-align:left">${esc(i?i.html:'-')}</td></tr></table></div>`;
+}
+TPLV.c.push('branchLine','branchCode');TPLS.c.push(['🏢 اسم وكود الفرع','{{#branch}}<div class="r-center">{{branchLine}}</div>{{/branch}}']);
+
 // ============ Stock ============// ============ Stock ============
 function openStock(){pend={};$('stFilter').value='';renderStock();show('stockModal')}
 function renderStock(){
@@ -1215,6 +1284,7 @@ const csvReport=()=>dl('تقرير_البيع_'+today()+'.csv',rep);
 
 // ============ Init ============
 function updateClock(){$('clock').textContent=new Date().toLocaleTimeString('ar-EG')}
+fetch('/api/site').then(r=>r.json()).then(d=>{if(d.branchName||d.branchCode)$('lbranch').textContent='فرع '+(d.branchName||'')+(d.branchCode?' ('+d.branchCode+')':'')}).catch(()=>{});
 setInterval(updateClock,1000);updateClock();tok=sessionStorage.getItem('tok')||'';if(tok)boot().catch(()=>{});
 </script>
 </body>
